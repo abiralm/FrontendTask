@@ -37,14 +37,21 @@ const Login = () => {
         try {
             const res = await login(data)
 
-            setAccessToken(res.accessToken)
-            setRefreshToken(res.refreshToken)
-            router.push("/invoices")
-
-            reset()
+            if (res && res.accessToken && res.refreshToken) {
+                setAccessToken(res.accessToken)
+                setRefreshToken(res.refreshToken)
+                reset()
+                setTimeout(() => {
+                    router.push("/invoices")
+                }, 50)
+            } else {
+                console.error("Invalid login response: missing tokens")
+            }
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                console.error(error.response?.data?.message)
+                console.error("Login error:", error.response?.data?.message)
+            } else {
+                console.error("Login error:", error)
             }
         }
     }
