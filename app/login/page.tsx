@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { login } from "@/lib/api";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginFormValues, loginSchema } from "@/lib/shema";
+import { LoginFormValues, loginSchema } from "@/schema/loginSchema";
 
 const Login = () => {
     const {
