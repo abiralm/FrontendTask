@@ -11,7 +11,6 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { InvoiceForm } from "./_component/invoiceForm"
-import { useState } from "react"
 
 const invoices = [
     {
@@ -58,15 +57,15 @@ const invoices = [
     },
 ]
 
-
 const Invoices = () => {
-    const [openInvoiceDialog,setopenInvoiceDialog] = useState<boolean>(false)
-
     return (
-        <div className='m-4 border-2 rounded-2xl'>
+        <div className="m-6 border-2 rounded-2xl">
             <div className="flex justify-between items-center p-2">
                 <p className="text-2xl font-extrabold">Invoice List</p>
-                <Button onClick={()=>console.log("hello")}>Add new invoice</Button>
+
+                <InvoiceForm
+                    trigger={<Button>Add new invoice</Button>}
+                />
             </div>
             <Table className="p-2">
                 <TableHeader>
@@ -80,7 +79,9 @@ const Invoices = () => {
                 <TableBody>
                     {invoices.map((invoice) => (
                         <TableRow key={invoice.invoice}>
-                            <TableCell className="font-medium">{invoice.invoice}</TableCell>
+                            <TableCell className="font-medium">
+                                {invoice.invoice}
+                            </TableCell>
                             <TableCell>{invoice.paymentStatus}</TableCell>
                             <TableCell>{invoice.paymentMethod}</TableCell>
                             <TableCell>{invoice.totalAmount}</TableCell>
@@ -94,13 +95,8 @@ const Invoices = () => {
                     </TableRow>
                 </TableFooter>
             </Table>
-            <InvoiceForm/>
         </div>
     )
-
-    
 }
 
 export default Invoices
-
-
