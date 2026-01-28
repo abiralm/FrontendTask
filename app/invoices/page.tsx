@@ -1,5 +1,7 @@
 "use client"
 
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import {
     Table,
@@ -11,62 +13,50 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { InvoiceForm } from "./_component/invoiceForm"
-
-const invoices = [
-    {
-        invoice: "INV001",
-        paymentStatus: "Paid",
-        totalAmount: "$250.00",
-        paymentMethod: "Credit Card",
-    },
-    {
-        invoice: "INV002",
-        paymentStatus: "Pending",
-        totalAmount: "$150.00",
-        paymentMethod: "PayPal",
-    },
-    {
-        invoice: "INV003",
-        paymentStatus: "Unpaid",
-        totalAmount: "$350.00",
-        paymentMethod: "Bank Transfer",
-    },
-    {
-        invoice: "INV004",
-        paymentStatus: "Paid",
-        totalAmount: "$450.00",
-        paymentMethod: "Credit Card",
-    },
-    {
-        invoice: "INV005",
-        paymentStatus: "Paid",
-        totalAmount: "$550.00",
-        paymentMethod: "PayPal",
-    },
-    {
-        invoice: "INV006",
-        paymentStatus: "Pending",
-        totalAmount: "$200.00",
-        paymentMethod: "Bank Transfer",
-    },
-    {
-        invoice: "INV007",
-        paymentStatus: "Unpaid",
-        totalAmount: "$300.00",
-        paymentMethod: "Credit Card",
-    },
-]
+import { getInvoices } from "@/lib/api"
+import { InvoiceType } from "@/types/authTypes"
 
 const Invoices = () => {
+    const router = useRouter()
+    const [invoices, setInvoices] = useState<InvoiceType[]>([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        const token = localStorage.getItem("accessToken")
+
+        if (!token) {
+            router.replace("/login")
+            return
+        }
+
+        const loadInvoices = async () => {
+            try {
+                const data = await getInvoices()
+                setInvoices(data.invoices)
+            } catch (error: any) {
+                if (error?.response?.status === 401 || error?.response?.status === 403) {
+                    localStorage.removeItem("accessToken")
+                    router.replace("/login")
+                }
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        loadInvoices()
+    }, [router])
+
+    if (loading) {
+        return <p className="p-4">Loading invoices...</p>
+    }
+
     return (
-        <div className="m-6 border-2 rounded-2xl">
+        <div className="m-4 border-2 rounded-2xl">
             <div className="flex justify-between items-center p-2">
                 <p className="text-2xl font-extrabold">Invoice List</p>
-
-                <InvoiceForm
-                    trigger={<Button>Add new invoice</Button>}
-                />
+                <InvoiceForm trigger={<Button>Add new invoice</Button>} />
             </div>
+
             <Table className="p-2">
                 <TableHeader>
                     <TableRow>
@@ -76,22 +66,24 @@ const Invoices = () => {
                         <TableHead>Amount</TableHead>
                     </TableRow>
                 </TableHeader>
+
                 <TableBody>
                     {invoices.map((invoice) => (
-                        <TableRow key={invoice.invoice}>
-                            <TableCell className="font-medium">
-                                {invoice.invoice}
-                            </TableCell>
-                            <TableCell>{invoice.paymentStatus}</TableCell>
+                        <TableRow key={invoice.date}>
+                            <TableCell>{invoice.customer}</TableCell>
+                            {/* <TableCell>{invoice.paymentStatus}</TableCell>
                             <TableCell>{invoice.paymentMethod}</TableCell>
-                            <TableCell>{invoice.totalAmount}</TableCell>
+                            <TableCell>${invoice.totalAmount}</TableCell> */}
                         </TableRow>
                     ))}
                 </TableBody>
+
                 <TableFooter>
                     <TableRow>
                         <TableCell colSpan={3}>Total</TableCell>
-                        <TableCell>$2,500.00</TableCell>
+                        <TableCell>
+                            {/* ${invoices.reduce((sum, i) => sum + i.totalAmount, 0)} */}
+                        </TableCell>
                     </TableRow>
                 </TableFooter>
             </Table>

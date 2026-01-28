@@ -17,7 +17,7 @@ export type LoginResponse = {
   refreshToken: string;
 };
 
-export type PostInvoiceType = {
+export type InvoiceType = {
   customer: string;
   date: string;
   dueDate: string;
@@ -30,3 +30,9 @@ type ItemType = {
   qty: string;
   price: number;
 };
+
+export type GetInvoicesResponse = {
+message: string
+user: unknown
+invoices: InvoiceType[]
+}
