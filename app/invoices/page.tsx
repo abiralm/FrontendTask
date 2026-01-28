@@ -10,6 +10,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { InvoiceForm } from "./_component/invoiceForm"
+import { useState } from "react"
 
 const invoices = [
     {
@@ -56,7 +58,10 @@ const invoices = [
     },
 ]
 
+
 const Invoices = () => {
+    const [openInvoiceDialog,setopenInvoiceDialog] = useState<boolean>(false)
+
     return (
         <div className='m-4 border-2 rounded-2xl'>
             <div className="flex justify-between items-center p-2">
@@ -89,8 +94,11 @@ const Invoices = () => {
                     </TableRow>
                 </TableFooter>
             </Table>
+            <InvoiceForm/>
         </div>
     )
+
+    
 }
 
 export default Invoices
